@@ -14,8 +14,14 @@ defmodule ExpinWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", ExpinWeb do
+  scope "/pins", ExpinWeb do
     pipe_through :api
+
+    get "/", PinController, :list
+    post "/", PinController, :add
+    get "/:request_id", PinController, :get
+    post "/:request_id", PinController, :replace
+    delete "/:request_id", PinController, :remove
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
