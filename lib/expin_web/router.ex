@@ -12,6 +12,7 @@ defmodule ExpinWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug ExpinWeb.Plug.TokenAuth
   end
 
   scope "/pins", ExpinWeb do
