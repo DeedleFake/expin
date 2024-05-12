@@ -14,16 +14,9 @@ defmodule ExpinWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ExpinWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
+  scope "/api", ExpinWeb do
+    pipe_through :api
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", ExpinWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:expin, :dev_routes) do
