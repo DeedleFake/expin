@@ -18,9 +18,10 @@ defmodule Expin.AccessTokens do
   @doc """
   Gets a single access token by its unhashed ID.
   """
-  def get_access_token(token) do
-    {:ok, id} = token_to_id(token)
-    Repo.get(AccessToken, id)
+  def fetch_access_token(token) do
+    with {:ok, id} <- token_to_id(token) do
+      Repo.fetch(AccessToken, id)
+    end
   end
 
   @doc """
