@@ -9,7 +9,7 @@ defmodule ExpinWeb.Plug.TokenAuth do
   end
 
   def call(conn, _opts) do
-    with ["Bearer " <> token] <- get_req_header(conn, "Authorization"),
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          %AccessToken{} = access_token <- AccessTokens.get_access_token(token) do
       conn |> assign(:access_token, access_token)
     else

@@ -10,9 +10,12 @@ defmodule Expin.AccessTokens.AccessToken do
     timestamps(type: :utc_datetime)
   end
 
-  def changeset(struct, params \\ %{}) do
+  @doc """
+  Returns a changeset for generating a new access token.
+  """
+  def generate_changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:token, :comment])
+    |> cast(params, [:comment])
     |> validate_required([:token])
   end
 end

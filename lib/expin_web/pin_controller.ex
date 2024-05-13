@@ -2,11 +2,11 @@ defmodule ExpinWeb.PinController do
   use ExpinWeb, :controller
 
   def list(conn, _params) do
-    conn |> json(%{not: :implemented, access_token: conn.assigns[:access_token]})
+    conn |> json(%{not: :implemented, access_token: conn.assigns[:access_token].comment})
   end
 
   def add(conn, _params) do
-    conn |> json(%{not: :implemented, access_token: conn.assigns[:access_token]})
+    conn |> json(%{not: :implemented, access_token: conn.assigns[:access_token].comment})
   end
 
   def get(conn, %{"request_id" => request_id}) do
@@ -14,7 +14,7 @@ defmodule ExpinWeb.PinController do
     |> json(%{
       not: :implemented,
       request_id: request_id,
-      access_token: conn.assigns[:access_token]
+      access_token: conn.assigns[:access_token].comment
     })
   end
 
@@ -23,7 +23,7 @@ defmodule ExpinWeb.PinController do
     |> json(%{
       not: :implemented,
       request_id: request_id,
-      access_token: conn.assigns[:access_token]
+      access_token: conn.assigns[:access_token].comment
     })
   end
 
@@ -32,7 +32,7 @@ defmodule ExpinWeb.PinController do
     |> json(%{
       not: :implemented,
       request_id: request_id,
-      access_token: conn.assigns[:access_token]
+      access_token: conn.assigns[:access_token].comment
     })
   end
 end

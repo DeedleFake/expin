@@ -9,98 +9,57 @@ defmodule Expin.AccessTokens do
   alias Expin.AccessTokens.AccessToken
 
   @doc """
-  Returns the list of access_tokens.
-
-  ## Examples
-
-      iex> list_access_tokens()
-      [%AccessToken{}, ...]
-
+  Returns the list of access tokens.
   """
   def list_access_tokens do
     Repo.all(AccessToken)
   end
 
   @doc """
-  Gets a single access_token.
+  Gets a single access token by its unhashed ID.
   """
-  def get_access_token(id), do: Repo.get(AccessToken, id)
-
-  @doc """
-  Gets a single access_token.
-
-  Raises if the Access token does not exist.
-
-  ## Examples
-
-      iex> get_access_token!(123)
-      %AccessToken{}
-
-  """
-  def get_access_token!(id), do: Repo.get!(AccessToken, id)
-
-  @doc """
-  Creates a access_token.
-
-  ## Examples
-
-      iex> create_access_token(%{field: value})
-      {:ok, %AccessToken{}}
-
-      iex> create_access_token(%{field: bad_value})
-      {:error, ...}
-
-  """
-  def create_access_token(attrs \\ %{}) do
-    %AccessToken{}
-    |> AccessToken.changeset(attrs)
-    |> Repo.insert()
+  def get_access_token(token) do
+    {:ok, id} = token_to_id(token)
+    Repo.get(AccessToken, id)
   end
 
   @doc """
-  Updates a access_token.
-
-  ## Examples
-
-      iex> update_access_token(access_token, %{field: new_value})
-      {:ok, %AccessToken{}}
-
-      iex> update_access_token(access_token, %{field: bad_value})
-      {:error, ...}
-
+  Generates a new access token.
   """
-  def update_access_token(%AccessToken{} = access_token, attrs) do
-    access_token
-    |> AccessToken.changeset(attrs)
-    |> Repo.update()
+  @spec generate_access_token(map()) :: {:ok, AccessToken.t(), String.t()} | {:error, term()}
+  def generate_access_token(attrs \\ %{}) do
+    {id, token} = generate_token()
+
+    result =
+      %AccessToken{token: id}
+      |> AccessToken.generate_changeset(attrs)
+      |> Repo.insert()
+
+    with {:ok, access_token} <- result do
+      {:ok, access_token, token}
+    end
   end
 
   @doc """
-  Deletes a AccessToken.
-
-  ## Examples
-
-      iex> delete_access_token(access_token)
-      {:ok, %AccessToken{}}
-
-      iex> delete_access_token(access_token)
-      {:error, ...}
-
+  Deletes an access token.
   """
   def delete_access_token(%AccessToken{} = access_token) do
     Repo.delete(access_token)
   end
 
-  @doc """
-  Returns a data structure for tracking access_token changes.
+  defp generate_token() do
+    token = :crypto.strong_rand_bytes(64) |> Base.encode16(case: :lower)
+    {:ok, id} = token_to_id(token)
+    {id, token}
+  end
 
-  ## Examples
+  defp token_to_id(token) do
+    case Base.decode16(token, case: :lower) do
+      {:ok, token} ->
+        {:ok, :crypto.hash(:sha256, token) |> Base.encode16(case: :lower)}
 
-      iex> change_access_token(access_token)
-      %Todo{...}
-
-  """
-  def change_access_token(%AccessToken{} = access_token, attrs \\ %{}) do
-    AccessToken.changeset(access_token, attrs)
+      :error ->
+        {:error, "decoding token failed"}
+    end
   end
 end
