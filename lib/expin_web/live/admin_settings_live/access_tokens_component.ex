@@ -19,8 +19,12 @@ defmodule ExpinWeb.AdminSettingsLive.AccessTokensComponent do
   def handle_event("generate", params, socket) do
     %{"comment" => comment} = params
 
+    attr = %{
+      comment: comment |> String.trim()
+    }
+
     socket =
-      case AccessTokens.generate_access_token(%{comment: comment}) do
+      case AccessTokens.generate_access_token(attr) do
         {:ok, access_token, token} ->
           socket
           |> assign(:generated_token, token)
