@@ -127,8 +127,9 @@ defmodule ExpinWeb.AdminSettingsLive do
     {:noreply, assign(socket, :active_tab, active_tab)}
   end
 
-  def handle_params(_params, _uri, socket) do
-    {:noreply, push_patch(socket, to: "/_/settings/access_tokens", replace: true)}
+  def handle_params(_params, _uri, %{assigns: %{live_action: :index}} = socket) do
+    dbg(socket)
+    {:noreply, push_patch(socket, to: ~p"/_/settings/access_tokens", replace: true)}
   end
 
   def handle_event("validate_email", params, socket) do
@@ -194,6 +195,6 @@ defmodule ExpinWeb.AdminSettingsLive do
   end
 
   def handle_event("change_tab", %{"value" => tab_id}, socket) do
-    {:noreply, push_patch(socket, to: "/_/settings/#{tab_id}")}
+    {:noreply, push_patch(socket, to: ~p"/_/settings/#{URI.encode_www_form(tab_id)}")}
   end
 end

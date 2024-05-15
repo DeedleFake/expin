@@ -53,7 +53,7 @@ defmodule ExpinWeb.Router do
 
     live_session :require_authenticated_admin,
       on_mount: [{ExpinWeb.AdminAuth, :ensure_authenticated}] do
-      live "/settings", AdminSettingsLive, :edit
+      live "/settings", AdminSettingsLive, :index
       live "/settings/:active_tab", AdminSettingsLive, :edit
       live "/settings/confirm_email/:token", AdminSettingsLive, :confirm_email
     end
