@@ -1,8 +1,6 @@
 defmodule ExpinWeb.AdminLoginLive do
   use ExpinWeb, :live_view
 
-  import Expin.Admins
-
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
@@ -45,7 +43,6 @@ defmodule ExpinWeb.AdminLoginLive do
     email = Phoenix.Flash.get(socket.assigns.flash, :email)
     form = to_form(%{"email" => email}, as: "admin")
 
-    {:ok, assign(socket, form: form, admin_exists?: admin_exists?()),
-     temporary_assigns: [form: form]}
+    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end

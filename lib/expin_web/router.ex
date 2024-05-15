@@ -10,6 +10,7 @@ defmodule ExpinWeb.Router do
     plug :put_root_layout, html: {ExpinWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :check_admin_exists
     plug :fetch_current_admin
   end
 
@@ -34,7 +35,10 @@ defmodule ExpinWeb.Router do
     get "/", Plugs.Redirect, to: "/_/log_in"
 
     live_session :redirect_if_admin_is_authenticated,
-      on_mount: [{ExpinWeb.AdminAuth, :redirect_if_admin_is_authenticated}] do
+      on_mount: [
+        {ExpinWeb.AdminAuth, :redirect_if_admin_is_authenticated},
+        {ExpinWeb.AdminAuth, :check_admin_exists}
+      ] do
       live "/register", AdminRegistrationLive, :new
       live "/log_in", AdminLoginLive, :new
       live "/reset_password", AdminForgotPasswordLive, :new

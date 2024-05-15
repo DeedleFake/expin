@@ -86,6 +86,10 @@ defmodule ExpinWeb.AdminAuth do
     |> redirect(to: ~p"/_")
   end
 
+  def check_admin_exists(conn, _opts) do
+    assign(conn, :admin_exists?, Admins.admin_exists?())
+  end
+
   @doc """
   Authenticates the admin by looking into the session
   and remember me token.
@@ -110,41 +114,10 @@ defmodule ExpinWeb.AdminAuth do
     end
   end
 
-  @doc """
-  Handles mounting and authenticating the current_admin in LiveViews.
+  def on_mount(:check_admin_exists, _params, _session, socket) do
+    {:cont, Phoenix.Component.assign(socket, :admin_exists?, Admins.admin_exists?())}
+  end
 
-  ## `on_mount` arguments
-
-    * `:mount_current_admin` - Assigns current_admin
-      to socket assigns based on admin_token, or nil if
-      there's no admin_token or no matching admin.
-
-    * `:ensure_authenticated` - Authenticates the admin from the session,
-      and assigns the current_admin to socket assigns based
-      on admin_token.
-      Redirects to login page if there's no logged admin.
-
-    * `:redirect_if_admin_is_authenticated` - Authenticates the admin from the session.
-      Redirects to signed_in_path if there's a logged admin.
-
-  ## Examples
-
-  Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
-  the current_admin:
-
-      defmodule ExpinWeb.PageLive do
-        use ExpinWeb, :live_view
-
-        on_mount {ExpinWeb.AdminAuth, :mount_current_admin}
-        ...
-      end
-
-  Or use the `live_session` of your router to invoke the on_mount callback:
-
-      live_session :authenticated, on_mount: [{ExpinWeb.AdminAuth, :ensure_authenticated}] do
-        live "/profile", ProfileLive, :index
-      end
-  """
   def on_mount(:mount_current_admin, _params, session, socket) do
     {:cont, mount_current_admin(socket, session)}
   end
