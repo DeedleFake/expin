@@ -8,6 +8,6 @@
   </:tab>
 
   <:tab id="account" title="Account">
-    <.account {assigns} />
+    <.live_component module={AccountComponent} id="account" current_admin={@current_admin} />
   </:tab>
 </.tabs>
