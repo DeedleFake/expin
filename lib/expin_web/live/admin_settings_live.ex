@@ -13,6 +13,15 @@ defmodule ExpinWeb.AdminSettingsLive do
         </.header>
         Not implemented.
       </:tab>
+
+      <:tab id="admins" title="Administrators">
+        <.header class="text-center">
+          Administrators
+          <:subtitle>Create and remove administrators</:subtitle>
+        </.header>
+        Not implemented.
+      </:tab>
+
       <:tab id="account" title="Account">
         <.header class="text-center">
           Account Settings
@@ -110,9 +119,16 @@ defmodule ExpinWeb.AdminSettingsLive do
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
-      |> assign(:active_tab, "access_tokens")
 
     {:ok, socket}
+  end
+
+  def handle_params(%{"active_tab" => active_tab}, _uri, socket) do
+    {:noreply, assign(socket, :active_tab, active_tab)}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    {:noreply, push_patch(socket, to: "/_/settings/access_tokens", replace: true)}
   end
 
   def handle_event("validate_email", params, socket) do
@@ -178,6 +194,6 @@ defmodule ExpinWeb.AdminSettingsLive do
   end
 
   def handle_event("change_tab", %{"value" => tab_id}, socket) do
-    {:noreply, assign(socket, :active_tab, tab_id)}
+    {:noreply, push_patch(socket, to: "/_/settings/#{tab_id}")}
   end
 end
