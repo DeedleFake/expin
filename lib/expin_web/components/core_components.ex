@@ -19,6 +19,41 @@ defmodule ExpinWeb.CoreComponents do
   alias Phoenix.LiveView.JS
   import ExpinWeb.Gettext
 
+  attr :active, :integer, required: true
+
+  slot :tab, required: true do
+    attr :id, :string, required: true
+    attr :title, :string, required: true
+  end
+
+  def tabs(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :active_tab,
+        assigns.tab |> Enum.find(hd(assigns.tab), fn %{id: id} -> id == assigns.active end)
+      )
+
+    ~H"""
+    <div class="flex flex-col justify-start gap-4">
+      <div class="flex flex-row justify-start gap-4">
+        <.button
+          :for={%{id: tab_id, title: title} <- @tab}
+          class={if(tab_id == @active, do: "invert", else: "")}
+          phx-click="change_tab"
+          value={tab_id}
+        >
+          <%= title %>
+        </.button>
+      </div>
+
+      <div>
+        <%= render_slot(@active_tab) %>
+      </div>
+    </div>
+    """
+  end
+
   @doc """
   Renders a modal.
 
