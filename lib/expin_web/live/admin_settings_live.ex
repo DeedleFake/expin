@@ -1,7 +1,7 @@
 defmodule ExpinWeb.AdminSettingsLive do
   use ExpinWeb, :live_view
 
-  alias __MODULE__.{AccountComponent}
+  alias __MODULE__.{AccessTokensComponent, AccountComponent}
 
   def mount(%{"token" => token}, _session, socket) do
     {:ok, assign(socket, :token, token)}

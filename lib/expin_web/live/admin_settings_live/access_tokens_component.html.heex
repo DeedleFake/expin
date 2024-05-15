@@ -1,0 +1,24 @@
+<div class="flex flex-col justify-start gap-4 divide-y">
+  <.simple_form for={@form} phx-submit="generate" phx-target={@myself}>
+    <.input field={@form[:comment]} label="Comment" />
+    <:actions>
+      <.button phx-disable-with="Generating...">Generate New Access Token</.button>
+    </:actions>
+  </.simple_form>
+
+  <.modal
+    :if={@generated_token != nil}
+    id="generated_modal"
+    show
+    on_cancel={JS.push("hide_modal", target: @myself)}
+  >
+    <div>
+      A new token has been generated. Please copy the token below, as it will not be shown again.
+    </div>
+    <pre class="p-4 overflow-auto select-all"><%= @generated_token %></pre>
+  </.modal>
+
+  <div id="access_tokens" phx-update="stream" class="flex flex-col justify-start gap-2">
+    <div :for={{id, token} <- @streams.tokens} id={id}><%= token.comment %></div>
+  </div>
+</div>

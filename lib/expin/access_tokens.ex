@@ -11,8 +11,12 @@ defmodule Expin.AccessTokens do
   @doc """
   Returns the list of access tokens.
   """
-  def list_access_tokens do
-    Repo.all(AccessToken)
+  def list_access_tokens() do
+    query =
+      from t in AccessToken,
+        order_by: [desc: t.inserted_at]
+
+    Repo.all(query)
   end
 
   @doc """
