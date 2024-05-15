@@ -3,6 +3,8 @@ defmodule ExpinWeb.AdminSettingsLive do
 
   alias Expin.Admins
 
+  embed_templates "admin_settings_live/*"
+
   def mount(%{"token" => token}, _session, socket) do
     socket =
       case Admins.update_admin_email(socket.assigns.current_admin, token) do
@@ -38,7 +40,6 @@ defmodule ExpinWeb.AdminSettingsLive do
   end
 
   def handle_params(_params, _uri, %{assigns: %{live_action: :index}} = socket) do
-    dbg(socket)
     {:noreply, push_patch(socket, to: ~p"/_/settings/access_tokens", replace: true)}
   end
 
