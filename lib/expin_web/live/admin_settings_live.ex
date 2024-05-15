@@ -3,6 +3,14 @@ defmodule ExpinWeb.AdminSettingsLive do
 
   alias __MODULE__.{AccountComponent}
 
+  def mount(%{"token" => token}, _session, socket) do
+    {:ok, assign(socket, :token, token)}
+  end
+
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, :token, nil)}
+  end
+
   def handle_params(%{"active_tab" => active_tab}, _uri, socket) do
     {:noreply, assign(socket, :active_tab, active_tab)}
   end

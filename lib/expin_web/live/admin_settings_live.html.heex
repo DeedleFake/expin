@@ -1,6 +1,6 @@
 <.tabs active={@active_tab}>
   <:tab id="access_tokens" title="Access Tokens">
-    Not implemented.
+    <.live_component module={AccessTokensComponent} id="access_tokens" />
   </:tab>
 
   <:tab id="admins" title="Administrators">
@@ -8,6 +8,11 @@
   </:tab>
 
   <:tab id="account" title="Account">
-    <.live_component module={AccountComponent} id="account" current_admin={@current_admin} />
+    <.live_component
+      module={AccountComponent}
+      id="account"
+      current_admin={@current_admin}
+      token={@token}
+    />
   </:tab>
 </.tabs>

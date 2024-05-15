@@ -3,20 +3,19 @@ defmodule ExpinWeb.AdminSettingsLive.AccountComponent do
 
   alias Expin.Admins
 
-  # def mount(socket) do
-  #  socket =
-  #    case Admins.update_admin_email(assigns.current_admin, token) do
-  #      :ok ->
-  #        put_flash(socket, :info, "Email changed successfully.")
-
-  #      :error ->
-  #        put_flash(socket, :error, "Email change link is invalid or it has expired.")
-  #    end
-
-  #  {:ok, push_navigate(socket, to: ~p"/_/settings")}
-  # end
-
   def update(assigns, socket) do
+    socket =
+      with %{token: token} when not is_nil(token) <- assigns,
+           :ok <- Admins.update_admin_email(assigns.current_admin, token) do
+        put_flash(socket, :info, "Email changed successfully.")
+      else
+        %{} ->
+          socket
+
+        :error ->
+          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+      end
+
     admin = assigns.current_admin
     email_changeset = Admins.change_admin_email(admin)
     password_changeset = Admins.change_admin_password(admin)
