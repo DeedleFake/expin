@@ -24,5 +24,6 @@ defmodule Expin.AccessTokens.AccessToken do
     struct
     |> cast(params, [:comment])
     |> validate_required([:token])
+    |> validate_length(:token, min: 2)
   end
 end
