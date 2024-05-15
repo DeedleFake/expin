@@ -29,15 +29,13 @@ defmodule ExpinWeb.Router do
   end
 
   scope "/_", ExpinWeb do
-    pipe_through [:browser, :redirect_if_admin_is_authenticated, :redirect_conditionally]
+    pipe_through [:browser, :redirect_if_admin_is_authenticated]
 
     get "/", Plugs.Redirect, to: "/_/log_in"
 
     live_session :redirect_if_admin_is_authenticated,
       on_mount: [{ExpinWeb.AdminAuth, :redirect_if_admin_is_authenticated}] do
-      live "/register", AdminRegistrationLive, :new,
-        private: %{conditional_redirect: [admin_exists: "/_/log_in"]}
-
+      live "/register", AdminRegistrationLive, :new
       live "/log_in", AdminLoginLive, :new
       live "/reset_password", AdminForgotPasswordLive, :new
       live "/reset_password/:token", AdminResetPasswordLive, :edit

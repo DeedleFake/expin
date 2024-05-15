@@ -76,10 +76,16 @@ defmodule Expin.Admins do
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_admin(attrs) do
-    %Admin{}
-    |> Admin.registration_changeset(attrs)
-    |> Repo.insert()
+  def register_admin(attrs, opts \\ []) do
+    opts = Keyword.validate!(opts, force: false)
+
+    if opts[:force] or !admin_exists?() do
+      %Admin{}
+      |> Admin.registration_changeset(attrs)
+      |> Repo.insert()
+    else
+      {:error, "an admin has been registered previously"}
+    end
   end
 
   @doc """

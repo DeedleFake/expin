@@ -67,6 +67,9 @@ defmodule ExpinWeb.AdminRegistrationLive do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+
+      {:error, err} when is_binary(err) ->
+        {:noreply, socket |> put_flash(:error, "Registration failed: #{err}")}
     end
   end
 

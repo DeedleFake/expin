@@ -195,23 +195,6 @@ defmodule ExpinWeb.AdminAuth do
     end
   end
 
-  def redirect_conditionally(conn, _opts) do
-    case conn.private[:conditional_redirect] do
-      nil ->
-        conn
-
-      conditions ->
-        Enum.reduce(conditions, conn, fn
-          {:admin_exists, path}, conn ->
-            if Admins.admin_exists?() do
-              conn |> redirect(to: path)
-            else
-              conn
-            end
-        end)
-    end
-  end
-
   @doc """
   Used for routes that require the admin to be authenticated.
 
