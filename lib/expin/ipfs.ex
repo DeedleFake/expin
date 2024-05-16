@@ -14,7 +14,7 @@ defmodule Expin.IPFS do
   def pin_add(path) when is_binary(path), do: pin_add(path, [])
   def pin_add(path, opts) when is_binary(path) and is_list(opts), do: pin_add(new(), path, opts)
 
-  def pin_add(%Req.Request{} = req, path, opts \\ []) when is_binary(path) do
+  def pin_add(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
     opts = Keyword.validate!(opts, [:recursive, :name, :progress]) |> Keyword.put_new(:arg, path)
 
     Req.post(req, url: "pin/add", params: opts) |> normalize_return()
@@ -23,7 +23,7 @@ defmodule Expin.IPFS do
   def pin_ls(), do: pin_ls([])
   def pin_ls(opts) when is_list(opts), do: pin_ls(new(), opts)
 
-  def pin_ls(%Req.Request{} = req, opts \\ []) do
+  def pin_ls(%Req.Request{} = req, opts \\ []) when is_list(opts) do
     opts = Keyword.validate!(opts, [:type, :quiet, :stream, :names])
 
     Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
