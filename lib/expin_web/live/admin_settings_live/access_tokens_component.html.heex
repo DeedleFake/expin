@@ -18,14 +18,21 @@
     <pre class="p-4 overflow-auto select-all"><%= @generated_token %></pre>
   </.modal>
 
-  <div id="access_tokens" phx-update="stream" class="flex flex-col justify-start gap-2 pt-2">
+  <div id="access_tokens" phx-update="stream" class="flex flex-col justify-start pt-2">
     <div
       :for={{id, token} <- @streams.tokens}
       id={id}
-      class="flex flex-row justify-between gap-2 mx-2"
+      class="flex flex-row justify-between items-center gap-2 p-2 rounded-lg hover:bg-slate-100"
     >
-      <%= token.comment %>
-      <.button class="bg-red" phx-click="delete" phx-target={@myself} value={token.token}>
+      <div class="truncate" title={token.comment}>
+        <%= token.comment %>
+      </div>
+      <.button
+        class="bg-red-600 hover:bg-red-500"
+        phx-click="delete"
+        phx-target={@myself}
+        value={token.token}
+      >
         Delete
       </.button>
     </div>
