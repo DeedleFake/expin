@@ -61,6 +61,7 @@ defmodule Expin.IPFS do
     Req.post(req, url: "pin/verify", params: opts) |> normalize_return()
   end
 
-  defp normalize_return({:ok, %{body: body}}), do: {:ok, body}
+  defp normalize_return({:ok, %Req.Response{status: 200, body: body}}), do: {:ok, body}
+  defp normalize_return({:ok, %Req.Response{body: body}}), do: {:error, body}
   defp normalize_return({:error, _} = err), do: err
 end
