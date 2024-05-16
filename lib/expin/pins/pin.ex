@@ -21,8 +21,8 @@ defmodule Expin.Pins.Pin do
     timestamps(type: :utc_datetime)
   end
 
-  def create_changeset(pin \\ %__MODULE__{}, attrs) do
-    pin
+  def create_changeset(attrs) do
+    %__MODULE__{}
     |> cast(attrs, [:cid, :name, :status, :origins])
     |> validate_required([:cid, :name])
     |> validate_inclusion(:status, @status_values)

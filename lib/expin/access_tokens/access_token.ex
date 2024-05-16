@@ -17,14 +17,11 @@ defmodule Expin.AccessTokens.AccessToken do
     timestamps(type: :utc_datetime)
   end
 
-  @doc """
-  Returns a changeset for generating a new access token.
-  """
-  def generate_changeset(struct, params \\ %{}) do
-    struct
-    |> cast(params, [:comment])
+  def generate_changeset(token, attrs) do
+    %__MODULE__{token: token}
+    |> cast(attrs, [:comment])
     |> validate_required([:token])
-    |> validate_length(:token, min: 2)
+    |> validate_length(:comment, min: 2)
   end
 
   def delete_changeset(id) when is_binary(id) do
