@@ -52,6 +52,15 @@ defmodule Expin.IPFS do
     Req.post(req, url: "pin/update", params: opts) |> normalize_return()
   end
 
+  def pin_verify(), do: pin_verify([])
+  def pin_verify(opts) when is_list(opts), do: pin_verify(new(), opts)
+
+  def pin_verify(%Req.Request{} = req, opts) when is_list(opts) do
+    opts = Keyword.validate!(opts, [:verbose, :quiet])
+
+    Req.post(req, url: "pin/verify", params: opts) |> normalize_return()
+  end
+
   defp normalize_return({:ok, %{body: body}}), do: {:ok, body}
   defp normalize_return({:error, _} = err), do: err
 end
