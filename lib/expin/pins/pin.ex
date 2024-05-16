@@ -10,17 +10,28 @@ defmodule Expin.Pins.Pin do
           updated_at: NaiveDateTime.t()
         }
 
+  @status_values [:queued, :pinning, :pinned, :failed]
+
   schema "pins" do
     field :cid, :string
     field :name, :string
+    field :status, Ecto.Enum, default: :queued, values: @status_values
+    field :origins, {:array, :string}, default: []
 
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
-  def changeset(pin, attrs) do
+  def create_changeset(pin \\ %__MODULE__{}, attrs) do
     pin
-    |> cast(attrs, [:cid, :name])
+    |> cast(attrs, [:cid, :name, :status, :origins])
     |> validate_required([:cid, :name])
+    |> validate_inclusion(:status, @status_values)
+  end
+
+  def update_status_changeset(pin, status) do
+    pin
+    |> cast(%{status: status}, [:status])
+    |> validate_required([:id, :status])
+    |> validate_inclusion(:status, @status_values)
   end
 end
