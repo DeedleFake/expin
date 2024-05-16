@@ -277,6 +277,18 @@ defmodule ExpinWeb.CoreComponents do
     """
   end
 
+  attr :class, :string, default: nil
+  attr :icon, :string, required: true
+  attr :rest, :global, include: ~w(disabled form name value)
+
+  def icon_button(assigns) do
+    ~H"""
+    <.button class={"flex flex-col justify-center items-center #{@class}"} {@rest}>
+      <.icon name={@icon} />
+    </.button>
+    """
+  end
+
   @doc """
   Renders an input with label and error messages.
 

@@ -1,5 +1,5 @@
 <div class="flex flex-col justify-start gap-4 divide-y">
-  <.simple_form for={@form} phx-submit="generate" phx-target={@myself}>
+  <.simple_form for={@form} id="access_token_form" phx-submit="generate" phx-target={@myself}>
     <.input field={@form[:comment]} label="Comment" />
     <:actions>
       <.button phx-disable-with="Generating...">Generate New Access Token</.button>
@@ -27,14 +27,14 @@
       <div class="truncate" title={token.comment}>
         <%= token.comment %>
       </div>
-      <.button
+      <.icon_button
         class="bg-red-600 hover:bg-red-500"
         phx-click="delete"
+        phx-disable-with="..."
         phx-target={@myself}
         value={token.token}
-      >
-        Delete
-      </.button>
+        icon="hero-x-circle"
+      />
     </div>
   </div>
 </div>
