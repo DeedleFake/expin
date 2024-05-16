@@ -46,10 +46,11 @@ defmodule Expin.AccessTokens do
   end
 
   @doc """
-  Deletes an access token.
+  Deletes an access token by ID.
   """
-  def delete_access_token(%AccessToken{} = access_token) do
-    Repo.delete(access_token)
+  def delete_access_token(id) when is_binary(id) do
+    AccessToken.delete_changeset(id)
+    |> Repo.delete()
   end
 
   defp generate_token() do

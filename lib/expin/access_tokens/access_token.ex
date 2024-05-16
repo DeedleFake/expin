@@ -26,4 +26,8 @@ defmodule Expin.AccessTokens.AccessToken do
     |> validate_required([:token])
     |> validate_length(:token, min: 2)
   end
+
+  def delete_changeset(id) when is_binary(id) do
+    %__MODULE__{token: id}
+  end
 end

@@ -40,4 +40,14 @@ defmodule ExpinWeb.AdminSettingsLive.AccessTokensComponent do
   def handle_event("hide_modal", _params, socket) do
     {:noreply, assign(socket, :generated_token, nil)}
   end
+
+  def handle_event("delete", %{"value" => token_id}, socket) do
+    case AccessTokens.delete_access_token(token_id) do
+      {:ok, _} ->
+        {:noreply, stream_delete_by_dom_id(socket, :tokens, token_id)}
+
+      {:error, err} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete access token: #{err}")}
+    end
+  end
 end
