@@ -7,6 +7,11 @@
 # General application configuration
 import Config
 
+config :expin, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 100],
+  repo: Expin.Repo
+
 config :expin,
   ecto_repos: [Expin.Repo],
   generators: [timestamp_type: :utc_datetime]

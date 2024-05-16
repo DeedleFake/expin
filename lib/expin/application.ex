@@ -10,6 +10,7 @@ defmodule Expin.Application do
     children = [
       ExpinWeb.Telemetry,
       Expin.Repo,
+      {Oban, Application.fetch_env!(:expin, Oban)},
       {DNSCluster, query: Application.get_env(:expin, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Expin.PubSub},
       # Start the Finch HTTP client for sending emails

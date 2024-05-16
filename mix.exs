@@ -60,7 +60,8 @@ defmodule Expin.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:req, "~> 0.4.14"}
+      {:req, "~> 0.4.14"},
+      {:oban, "~> 2.17"}
     ]
   end
 
