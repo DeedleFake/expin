@@ -29,6 +29,15 @@ defmodule Expin.IPFS do
     Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
   end
 
+  def pin_rm(path) when is_binary(path), do: pin_rm(path, [])
+  def pin_rm(path, opts) when is_binary(path) and is_list(opts), do: pin_rm(new(), path, opts)
+
+  def pin_rm(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
+    opts = Keyword.validate!(opts, [:recursive]) |> Keyword.put_new(:arg, path)
+
+    Req.post(req, url: "pin/rm", params: opts) |> normalize_return()
+  end
+
   defp normalize_return({:ok, %{body: body}}), do: {:ok, body}
   defp normalize_return({:error, _} = err), do: err
 end
