@@ -47,7 +47,9 @@ defmodule Expin.IPFS do
 
   def pin_update(%Req.Request{} = req, old_path, new_path, opts)
       when is_binary(old_path) and is_binary(new_path) and is_list(opts) do
-    opts = Keyword.validate!(opts, [:unpin]) |> Kernel.++(arg: old_path, arg: new_path)
+    opts =
+      Keyword.validate!(opts, [:unpin])
+      |> then(&[{:arg, old_path}, {:arg, new_path} | &1])
 
     Req.post(req, url: "pin/update", params: opts) |> normalize_return()
   end
@@ -59,6 +61,12 @@ defmodule Expin.IPFS do
     opts = Keyword.validate!(opts, [:verbose, :quiet])
 
     Req.post(req, url: "pin/verify", params: opts) |> normalize_return()
+  end
+
+  def swarm_connect(peer) when is_binary(peer), do: swarm_connect(new(), peer)
+
+  def swarm_connect(%Req.Request{} = req, peer) when is_binary(peer) do
+    Req.post(req, url: "swarm/connect", params: [arg: peer])
   end
 
   defp normalize_return({:ok, %Req.Response{status: 200, body: body}}), do: {:ok, body}
