@@ -11,27 +11,22 @@ defmodule Expin.IPFS do
     Req.new(opts)
   end
 
-  def pin_ls(req \\ nil, opts \\ nil) do
-    {req, opts} = normalize_args(req, opts)
-    opts = Keyword.validate!(opts, [:type, :quiet, :names])
+  def pin_add(path) when is_binary(path), do: pin_add(path, [])
+  def pin_add(path, opts) when is_binary(path) and is_list(opts), do: pin_add(new(), path, opts)
 
-    Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
+  def pin_add(%Req.Request{} = req, path, opts \\ []) when is_binary(path) do
+    opts = Keyword.validate!(opts, [:recursive, :name, :progress]) |> Keyword.put_new(:arg, path)
+
+    Req.post(req, url: "pin/add", params: opts) |> normalize_return()
   end
 
-  defp normalize_args(req, opts) do
-    if opts == nil do
-      cond do
-        Keyword.keyword?(req) -> {new(), req}
-        req == nil -> {new(), []}
-        true -> {req, []}
-      end
-    else
-      if req == nil do
-        {new(), opts}
-      else
-        {req, opts}
-      end
-    end
+  def pin_ls(), do: pin_ls([])
+  def pin_ls(opts) when is_list(opts), do: pin_ls(new(), opts)
+
+  def pin_ls(%Req.Request{} = req, opts \\ []) do
+    opts = Keyword.validate!(opts, [:type, :quiet, :stream, :names])
+
+    Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
   end
 
   defp normalize_return({:ok, %{body: body}}), do: {:ok, body}
