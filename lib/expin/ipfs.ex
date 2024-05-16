@@ -38,6 +38,20 @@ defmodule Expin.IPFS do
     Req.post(req, url: "pin/rm", params: opts) |> normalize_return()
   end
 
+  def pin_update(old_path, new_path) when is_binary(old_path) and is_binary(new_path),
+    do: pin_update(old_path, new_path, [])
+
+  def pin_update(old_path, new_path, opts)
+      when is_binary(old_path) and is_binary(new_path) and is_list(opts),
+      do: pin_update(new(), old_path, new_path, opts)
+
+  def pin_update(%Req.Request{} = req, old_path, new_path, opts)
+      when is_binary(old_path) and is_binary(new_path) and is_list(opts) do
+    opts = Keyword.validate!(opts, [:unpin]) |> Kernel.++(arg: old_path, arg: new_path)
+
+    Req.post(req, url: "pin/update", params: opts) |> normalize_return()
+  end
+
   defp normalize_return({:ok, %{body: body}}), do: {:ok, body}
   defp normalize_return({:error, _} = err), do: err
 end
