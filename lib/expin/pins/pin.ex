@@ -17,13 +17,14 @@ defmodule Expin.Pins.Pin do
     field :name, :string
     field :status, Ecto.Enum, default: :queued, values: @status_values
     field :origins, {:array, :string}, default: []
+    field :meta, :map, default: %{}
 
     timestamps(type: :utc_datetime)
   end
 
   def create_changeset(attrs) do
     %__MODULE__{}
-    |> cast(attrs, [:cid, :name, :status, :origins])
+    |> cast(attrs, [:cid, :name, :status, :origins, :meta])
     |> validate_required([:cid, :name])
     |> validate_inclusion(:status, @status_values)
   end
