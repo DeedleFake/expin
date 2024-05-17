@@ -1,4 +1,4 @@
-defmodule Expin.PinJob do
+defmodule Expin.PinWorker do
   use Oban.Worker, queue: :default
 
   def perform(job) do
