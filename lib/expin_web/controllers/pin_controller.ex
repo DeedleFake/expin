@@ -9,8 +9,10 @@ defmodule ExpinWeb.PinController do
     conn |> render(:index, %{pins: Pins.list_pins()})
   end
 
-  def add(conn, _params) do
-    conn |> json(%{not: :implemented, access_token: conn.assigns[:access_token].comment})
+  def add(conn, %{"cid" => cid} = params) do
+    opts = params_to_keyword(params, [:name, :origins, :meta])
+    Pins.queue_add_pin(cid, opts)
+    conn |> json(%{not: :implemented})
   end
 
   def get(conn, %{"request_id" => request_id}) do
@@ -35,6 +37,26 @@ defmodule ExpinWeb.PinController do
       request_id: request_id,
       access_token: conn.assigns[:access_token].comment
     })
+  end
+
+  defp params_to_keyword(params, names) when is_map(params) and is_list(names) do
+    Enum.reduce(names, [], fn
+      {name, key}, keyword when is_map_key(params, key) ->
+        [{name, params[key]} | keyword]
+
+      name, keyword when is_atom(name) ->
+        key = Atom.to_string(name)
+
+        if is_map_key(params, key) do
+          [{key, params[name]} | keyword]
+        else
+          keyword
+        end
+
+      _name, keyword ->
+        keyword
+    end)
+    |> Enum.reverse()
   end
 
   defmodule Fallback do

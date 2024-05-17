@@ -7,6 +7,21 @@ defmodule Expin.Pins do
   alias Expin.Repo
 
   alias Expin.Pins.Pin
+  alias Expin.Pins.Worker
+
+  def queue_add_pin(cid, opts \\ []) when is_binary(cid) do
+    opts = Keyword.validate!(opts, name: "", origins: [], meta: %{})
+
+    %{action: :add, cid: cid, name: opts[:name], origins: opts[:origins], meta: opts[:meta]}
+    |> Worker.new()
+    |> Repo.insert()
+  end
+
+  def queue_delete_pin(id) when is_integer(id) do
+    %{action: :delete, id: id}
+    |> Worker.new()
+    |> Repo.insert()
+  end
 
   @doc """
   Returns the list of pins.

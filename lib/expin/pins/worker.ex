@@ -1,10 +1,12 @@
 defmodule Expin.Pins.Worker do
   use Oban.Worker, queue: :default
 
-  def perform(job) do
-    %Oban.Job{args: args} = job
-    dbg()
+  def perform(%Oban.Job{args: %{"action" => action}} = job) do
+    perform_action(action, job)
+  end
 
-    {:ok, 3}
+  defp perform_action(:add, job) do
+    dbg()
+    :ok
   end
 end

@@ -10,7 +10,8 @@ import Config
 config :expin, Oban,
   engine: Oban.Engines.Basic,
   queues: [default: 100],
-  repo: Expin.Repo
+  repo: Expin.Repo,
+  plugins: [Oban.Plugins.Pruner]
 
 config :expin,
   ecto_repos: [Expin.Repo],
