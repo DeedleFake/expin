@@ -21,10 +21,22 @@ defmodule Expin.IPFS do
   end
 
   def pin_ls(), do: pin_ls([])
+
+  def pin_ls(%Req.Request{} = req), do: pin_ls(req, [])
+  def pin_ls(path) when is_binary(path), do: pin_ls(path, [])
   def pin_ls(opts) when is_list(opts), do: pin_ls(new(), opts)
 
-  def pin_ls(%Req.Request{} = req, opts \\ []) when is_list(opts) do
+  def pin_ls(path, opts) when is_binary(path) and is_list(opts), do: pin_ls(new(), path, opts)
+
+  def pin_ls(%Req.Request{} = req, opts) when is_list(opts) do
     opts = Keyword.validate!(opts, [:type, :quiet, :stream, :names])
+
+    Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
+  end
+
+  def pin_ls(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
+    opts =
+      Keyword.validate!(opts, [:type, :quiet, :stream, :names]) |> Keyword.put_new(:arg, path)
 
     Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
   end
