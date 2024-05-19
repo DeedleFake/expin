@@ -10,6 +10,7 @@ defmodule Expin.Application do
     children = [
       ExpinWeb.Telemetry,
       Expin.Repo,
+      {Task.Supervisor, name: Expin.Pins.Worker.TaskSupervisor},
       {Oban, Application.fetch_env!(:expin, Oban)},
       {DNSCluster, query: Application.get_env(:expin, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Expin.PubSub},

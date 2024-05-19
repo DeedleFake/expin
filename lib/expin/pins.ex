@@ -35,6 +35,10 @@ defmodule Expin.Pins do
   """
   def fetch_pin(id), do: Repo.fetch(Pin, id)
 
+  def upsert_pin(cid, opts \\ []) when is_binary(cid) do
+    raise "not implemented"
+  end
+
   @doc """
   Creates a pin.
   """
