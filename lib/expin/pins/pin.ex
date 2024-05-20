@@ -2,15 +2,18 @@ defmodule Expin.Pins.Pin do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @status_values [:queued, :pinning, :pinned, :failed]
+
   @type t() :: %__MODULE__{
           id: non_neg_integer(),
           cid: String.t(),
           name: String.t(),
+          status: :queued | :pinning | :pinned | :failed,
+          origins: [String.t()],
+          meta: map(),
           inserted_at: NaiveDateTime.t(),
           updated_at: NaiveDateTime.t()
         }
-
-  @status_values [:queued, :pinning, :pinned, :failed]
 
   schema "pins" do
     field :cid, :string

@@ -12,13 +12,10 @@ defmodule Expin.Pins do
 
   @impl true
   def init([]) do
-    if :ets.info(__MODULE__) == :undefined do
-      :ets.new(__MODULE__, [:named_table])
-    end
-
     children = [
-      {Task.Supervisor, name: __MODULE__},
-      {__MODULE__.Controller, supervisor: __MODULE__}
+      {DynamicSupervisor, name: __MODULE__.Supervisor},
+      {Registry, keys: :unique, name: __MODULE__.Registry},
+      {__MODULE__.Manager, registry: __MODULE__.Registry}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -29,7 +26,7 @@ defmodule Expin.Pins do
     raise "not implemented"
   end
 
-  def list_pins do
+  def list_pins() do
     Repo.all(Pin)
   end
 
