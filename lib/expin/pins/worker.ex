@@ -2,6 +2,7 @@ defmodule Expin.Pins.Worker do
   use GenServer, restart: :transient
 
   alias Expin.IPFS
+  alias Expin.Pins
 
   def start_link(opts) do
     {action, opts} = Keyword.pop!(opts, :action)
@@ -17,7 +18,9 @@ defmodule Expin.Pins.Worker do
 
   @impl true
   def handle_continue({:add_pin, pin}, state) do
-    IPFS.pin_add(pin.cid)
+    {:ok, _pin} = Pins.update_pin_status(pin.id, :pinning)
+    {:ok, _rsp} = IPFS.pin_add(pin.cid)
+    {:ok, _pin} = Pins.update_pin_status(pin.id, :pinned)
     {:stop, :normal, state}
   end
 end
