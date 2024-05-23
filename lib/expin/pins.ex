@@ -54,7 +54,7 @@ defmodule Expin.Pins do
   @spec update_pin_status(non_neg_integer(), Pin.status()) ::
           {:ok, Pin.t()} | {:error, Ecto.Changeset.t()}
   def update_pin_status(id, status) do
-    with {:ok, pin} <- Repo.get(Pin, id) do
+    with {:ok, pin} <- Repo.fetch(Pin, id) do
       pin |> Pin.update_status_changeset(status) |> Repo.update()
     end
   end

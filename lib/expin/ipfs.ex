@@ -3,6 +3,15 @@ defmodule Expin.IPFS do
   Provides a simple wrapper around the Kubo RPC API.
   """
 
+  defmodule ServerError do
+    defexception [:code, :message, :type]
+
+    @impl true
+    def exception(%{"Code" => code, "Message" => message, "Type" => type}) do
+      %__MODULE__{code: code, message: message, type: type}
+    end
+  end
+
   def new(opts \\ []) do
     opts =
       opts
@@ -82,6 +91,9 @@ defmodule Expin.IPFS do
   end
 
   defp normalize_return({:ok, %Req.Response{status: 200, body: body}}), do: {:ok, body}
-  defp normalize_return({:ok, %Req.Response{body: body}}), do: {:error, body}
+
+  defp normalize_return({:ok, %Req.Response{body: body}}),
+    do: {:error, ServerError.exception(body)}
+
   defp normalize_return({:error, _} = err), do: err
 end
