@@ -1,39 +1,39 @@
 defmodule ExpinWeb.PinJSON do
   alias Expin.Pins.Pin
 
-  @doc """
-  Renders a list of pins.
-  """
   def index(%{pins: pins}) do
-    results =
-      for pin <- pins do
-        %{requestid: nil, status: "queued", pin: data(pin)}
-      end
-
-    %{count: length(pins), results: results}
+    %{count: length(pins), results: pins |> Enum.map(&pin_status/1)}
   end
 
-  @doc """
-  Renders a single pin.
-  """
   def show(%{pin: pin}) do
-    %{data: data(pin)}
+    pin_status(pin)
   end
 
-  def error(%{reason: reason, details: details}) do
+  def error(%{reason: reason} = error) do
+    error = %{
+      reason: reason,
+      details: error[:details]
+    }
+
+    %{error: error}
+  end
+
+  defp pin_status(%Pin{} = pin) do
     %{
-      error: %{
-        reason: reason,
-        details: details
-      }
+      requestid: pin.id,
+      status: pin.status,
+      created: pin.inserted_at,
+      pin: pin(pin),
+      delegates: []
     }
   end
 
-  defp data(%Pin{} = pin) do
+  defp pin(%Pin{} = pin) do
     %{
-      id: pin.id,
       cid: pin.cid,
-      name: pin.name
+      name: pin.name,
+      origins: pin.origins,
+      meta: pin.meta
     }
   end
 end

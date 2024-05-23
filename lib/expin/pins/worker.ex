@@ -19,8 +19,16 @@ defmodule Expin.Pins.Worker do
   @impl true
   def handle_continue({:add_pin, pin}, state) do
     {:ok, _pin} = Pins.update_pin_status(pin.id, :pinning)
-    {:ok, _rsp} = IPFS.pin_add(pin.cid)
-    {:ok, _pin} = Pins.update_pin_status(pin.id, :pinned)
+
+    case IPFS.pin_add(pin.cid) do
+      {:ok, _rsp} ->
+        {:ok, _pin} = Pins.update_pin_status(pin.id, :pinned)
+
+      {:error, err} ->
+        {:ok, _pin} = Pins.update_pin_status(pin.id, :failed)
+        raise err
+    end
+
     {:stop, :normal, state}
   end
 end

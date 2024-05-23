@@ -5,8 +5,12 @@ defmodule Expin.Pins.Manager do
   @supervisor Expin.Pins.Supervisor
   @worker Expin.Pins.Worker
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, [], opts)
+  def run(action, pin) do
+    GenServer.call(__MODULE__, {:run, action, pin})
+  end
+
+  def start_link([]) do
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   @impl true

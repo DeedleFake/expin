@@ -1,6 +1,8 @@
 defmodule ExpinWeb.PinController do
   use ExpinWeb, :controller
 
+  require Logger
+
   alias Expin.Pins
 
   action_fallback __MODULE__.Fallback
@@ -11,8 +13,10 @@ defmodule ExpinWeb.PinController do
 
   def add(conn, %{"cid" => cid} = params) do
     opts = params_to_keyword(params, [:name, :origins, :meta])
-    Pins.queue_add_pin(cid, opts)
-    conn |> json(%{not: :implemented})
+
+    with {:ok, pin} <- Pins.queue_add_pin(cid, opts) do
+      conn |> put_status(:accepted) |> render(:show, %{pin: pin})
+    end
   end
 
   def get(conn, %{"request_id" => request_id}) do
@@ -63,9 +67,17 @@ defmodule ExpinWeb.PinController do
     use ExpinWeb, :controller
 
     def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
-      conn
-      |> put_status(:unprocessable_entity)
-      |> render(:error, %{reason: "INTERNAL_SERVER_ERROR", details: changeset.errors})
+      Logger.error(inspect(changeset.errors))
+
+      if changeset.valid? do
+        conn
+        |> put_status(:internal_server_error)
+        |> render(:error, %{reason: "INTERNAL_SERVER_ERROR"})
+      else
+        conn
+        |> put_status(:bad_request)
+        |> render(:error, %{reason: "BAD_REQUEST"})
+      end
     end
 
     def call(conn, {:error, %Ecto.NoResultsError{}}) do
