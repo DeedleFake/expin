@@ -8,7 +8,6 @@ defmodule Expin.Pins do
   alias Expin.Pins.{Pin, Producer, WorkerSupervisor}
 
   def registry(), do: __MODULE__.Registry
-  def worker_supervisor(), do: __MODULE__.Supervisor
 
   def start_link([]) do
     Supervisor.start_link(__MODULE__, [])

@@ -3,6 +3,7 @@ defmodule Expin.Pins.WorkerSupervisor do
 
   alias Expin.IPFS
   alias Expin.Pins
+  alias Expin.Pins.Producer
 
   @type action() :: :add_pin
 
@@ -16,13 +17,19 @@ defmodule Expin.Pins.WorkerSupervisor do
       %{id: __MODULE__, start: {__MODULE__, :start_worker, []}, restart: :transient}
     ]
 
-    ConsumerSupervisor.init(children, strategy: :one_for_one, subscribe_to: [Pins])
+    ConsumerSupervisor.init(children, strategy: :one_for_one, subscribe_to: [Producer])
   end
 
   def start_worker({action, pin}) do
     Task.start_link(fn ->
       Registry.register(Pins.registry(), pin.cid, :no_value)
       perform_action(action, pin)
+    end)
+  end
+
+  def stop_worker(cid) do
+    Registry.dispatch(Pins.registry(), cid, fn [{pid, _}] ->
+      ConsumerSupervisor.terminate_child(WorkerSupervisor, pid)
     end)
   end
 
