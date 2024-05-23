@@ -5,8 +5,10 @@ defmodule Expin.Pins do
   alias Plug.Exception
   alias Expin.Repo
 
-  alias Expin.Pins.Pin
-  alias __MODULE__.Manager
+  alias Expin.Pins.{Pin, Producer, WorkerSupervisor}
+
+  def registry(), do: __MODULE__.Registry
+  def worker_supervisor(), do: __MODULE__.Supervisor
 
   def start_link([]) do
     Supervisor.start_link(__MODULE__, [])
@@ -15,9 +17,9 @@ defmodule Expin.Pins do
   @impl true
   def init([]) do
     children = [
-      {DynamicSupervisor, name: __MODULE__.Supervisor},
-      {Registry, keys: :unique, name: __MODULE__.Registry},
-      Manager
+      {Registry, keys: :unique, name: registry()},
+      Producer,
+      WorkerSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
@@ -37,7 +39,7 @@ defmodule Expin.Pins do
       })
 
     with {:ok, pin} <- Repo.insert(changeset) do
-      Manager.run(:add_pin, pin)
+      Producer.run(:add_pin, pin)
       {:ok, pin}
     end
   end
