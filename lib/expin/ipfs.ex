@@ -90,6 +90,17 @@ defmodule Expin.IPFS do
     Req.post(req, url: "swarm/connect", params: [arg: peer])
   end
 
+  def resolve(path) when is_binary(path), do: resolve(path, [])
+  def resolve(path, opts) when is_binary(path) and is_list(opts), do: resolve(new(), path, opts)
+
+  def resolve(%Req.Request{} = req, path, opts) when is_binary(path) and is_list(opts) do
+    opts =
+      Keyword.validate!(opts, [:recursive, :"dht-record-count", :"dht-timeout"])
+      |> Keyword.put_new(:arg, path)
+
+    Req.post(req, url: "resolve", params: opts) |> normalize_return()
+  end
+
   defp normalize_return({:ok, %Req.Response{status: 200, body: body}}), do: {:ok, body}
 
   defp normalize_return({:ok, %Req.Response{body: body}}),
