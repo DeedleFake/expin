@@ -6,7 +6,7 @@ defmodule Expin.Pins.Pin do
 
   @type t() :: %__MODULE__{
           id: non_neg_integer(),
-          cid: String.t(),
+          cid: cid(),
           name: String.t(),
           status: status(),
           origins: [String.t()],
@@ -15,6 +15,7 @@ defmodule Expin.Pins.Pin do
           updated_at: NaiveDateTime.t()
         }
   @type status() :: :queued | :pinning | :pinned | :failed
+  @type cid() :: String.t()
 
   schema "pins" do
     field :cid, :string

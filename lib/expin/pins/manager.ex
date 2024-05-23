@@ -1,10 +1,13 @@
 defmodule Expin.Pins.Manager do
   use GenServer
 
-  @registry Expin.Pins.Registry
-  @supervisor Expin.Pins.Supervisor
-  @worker Expin.Pins.Worker
+  alias Expin.Pins
 
+  @registry Pins.Registry
+  @supervisor Pins.Supervisor
+  @worker Pins.Worker
+
+  @spec run(Pins.Worker.action(), Pins.Pin.t()) :: DynamicSupervisor.on_start_child()
   def run(action, pin) do
     GenServer.call(__MODULE__, {:run, action, pin})
   end

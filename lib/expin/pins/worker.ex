@@ -4,6 +4,8 @@ defmodule Expin.Pins.Worker do
   alias Expin.IPFS
   alias Expin.Pins
 
+  @type action() :: :add_pin
+
   def start_link(opts) do
     {action, opts} = Keyword.pop!(opts, :action)
     {pin, opts} = Keyword.pop!(opts, :pin)
