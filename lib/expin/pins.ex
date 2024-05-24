@@ -5,7 +5,7 @@ defmodule Expin.Pins do
   alias Plug.Exception
   alias Expin.Repo
 
-  alias Expin.Pins.{Pin, Producer, Consumer}
+  alias __MODULE__.{Pin, Producer, Consumer}
 
   @spec registry() :: GenServer.name()
   def registry(), do: __MODULE__.Registry

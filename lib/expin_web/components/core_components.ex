@@ -41,7 +41,8 @@ defmodule ExpinWeb.CoreComponents do
           :for={%{id: tab_id, title: title} <- @tab}
           class={if(tab_id == @active, do: "invert", else: "")}
           phx-click="change_tab"
-          value={tab_id}
+          phx-value-tab-id={tab_id}
+          phx-value-tab-title={title}
         >
           <%= title %>
         </.button>
