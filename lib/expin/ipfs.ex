@@ -4,7 +4,17 @@ defmodule Expin.IPFS do
   """
 
   defmodule ServerError do
+    @moduledoc """
+    Represents an error returned from the IPFS API.
+    """
+
     defexception [:code, :message, :type]
+
+    @type t() :: %__MODULE__{
+            code: integer(),
+            message: String.t(),
+            type: String.t()
+          }
 
     @impl true
     def exception(%{"Code" => code, "Message" => message, "Type" => type}) do
@@ -12,6 +22,10 @@ defmodule Expin.IPFS do
     end
   end
 
+  @type t() :: Req.Request.t()
+  @type response() :: {:ok, map()} | {:error, ServerError.t()} | {:error, term()}
+
+  @spec new(keyword()) :: t()
   def new(opts \\ []) do
     opts =
       opts
@@ -23,6 +37,7 @@ defmodule Expin.IPFS do
   def pin_add(path) when is_binary(path), do: pin_add(path, [])
   def pin_add(path, opts) when is_binary(path) and is_list(opts), do: pin_add(new(), path, opts)
 
+  @spec pin_add(t(), String.t(), keyword()) :: response()
   def pin_add(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
     opts = Keyword.validate!(opts, [:recursive, :name, :progress]) |> Keyword.put_new(:arg, path)
 
@@ -43,6 +58,7 @@ defmodule Expin.IPFS do
     Req.post(req, url: "pin/ls", params: opts) |> normalize_return()
   end
 
+  @spec pin_ls(t(), String.t(), keyword()) :: response()
   def pin_ls(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
     opts =
       Keyword.validate!(opts, [:type, :quiet, :stream, :names]) |> Keyword.put_new(:arg, path)
@@ -53,6 +69,7 @@ defmodule Expin.IPFS do
   def pin_rm(path) when is_binary(path), do: pin_rm(path, [])
   def pin_rm(path, opts) when is_binary(path) and is_list(opts), do: pin_rm(new(), path, opts)
 
+  @spec pin_rm(t(), String.t(), keyword()) :: response()
   def pin_rm(%Req.Request{} = req, path, opts \\ []) when is_binary(path) and is_list(opts) do
     opts = Keyword.validate!(opts, [:recursive]) |> Keyword.put_new(:arg, path)
 
@@ -66,6 +83,7 @@ defmodule Expin.IPFS do
       when is_binary(old_path) and is_binary(new_path) and is_list(opts),
       do: pin_update(new(), old_path, new_path, opts)
 
+  @spec pin_update(t(), String.t(), String.t(), keyword()) :: response()
   def pin_update(%Req.Request{} = req, old_path, new_path, opts)
       when is_binary(old_path) and is_binary(new_path) and is_list(opts) do
     opts =
@@ -78,6 +96,7 @@ defmodule Expin.IPFS do
   def pin_verify(), do: pin_verify([])
   def pin_verify(opts) when is_list(opts), do: pin_verify(new(), opts)
 
+  @spec pin_verify(t(), keyword()) :: response()
   def pin_verify(%Req.Request{} = req, opts) when is_list(opts) do
     opts = Keyword.validate!(opts, [:verbose, :quiet])
 
@@ -86,6 +105,7 @@ defmodule Expin.IPFS do
 
   def swarm_connect(peer) when is_binary(peer), do: swarm_connect(new(), peer)
 
+  @spec swarm_connect(t(), String.t()) :: response()
   def swarm_connect(%Req.Request{} = req, peer) when is_binary(peer) do
     Req.post(req, url: "swarm/connect", params: [arg: peer])
   end
@@ -93,6 +113,7 @@ defmodule Expin.IPFS do
   def resolve(path) when is_binary(path), do: resolve(path, [])
   def resolve(path, opts) when is_binary(path) and is_list(opts), do: resolve(new(), path, opts)
 
+  @spec resolve(t(), String.t(), keyword()) :: response()
   def resolve(%Req.Request{} = req, path, opts) when is_binary(path) and is_list(opts) do
     opts =
       Keyword.validate!(opts, [:recursive, :"dht-record-count", :"dht-timeout"])
@@ -101,10 +122,13 @@ defmodule Expin.IPFS do
     Req.post(req, url: "resolve", params: opts) |> normalize_return()
   end
 
+  @spec normalize_return({:ok, Req.Response.t()}) :: {:ok, map()}
   defp normalize_return({:ok, %Req.Response{status: 200, body: body}}), do: {:ok, body}
 
+  @spec normalize_return({:ok, Req.Response.t()}) :: {:error, ServerError.t()}
   defp normalize_return({:ok, %Req.Response{body: body}}),
     do: {:error, ServerError.exception(body)}
 
+  @spec normalize_return({:error, term()}) :: {:error, term()}
   defp normalize_return({:error, _} = err), do: err
 end
