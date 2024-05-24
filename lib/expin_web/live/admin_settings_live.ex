@@ -4,7 +4,12 @@ defmodule ExpinWeb.AdminSettingsLive do
   alias __MODULE__.{AccessTokensComponent, AccountComponent}
 
   def mount(%{"token" => token}, _session, socket) do
-    {:ok, assign(socket, :token, token)}
+    socket =
+      socket
+      |> assign(:page_title, "Admin Settings")
+      |> assign(:token, token)
+
+    {:ok, socket}
   end
 
   def mount(_params, _session, socket) do
