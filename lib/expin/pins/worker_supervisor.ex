@@ -3,7 +3,7 @@ defmodule Expin.Pins.WorkerSupervisor do
 
   alias Expin.IPFS
   alias Expin.Pins
-  alias Expin.Pins.Producer
+  alias Expin.Pins.{Producer, Pin}
 
   @type action() :: :add_pin
 
@@ -20,6 +20,7 @@ defmodule Expin.Pins.WorkerSupervisor do
     ConsumerSupervisor.init(children, strategy: :one_for_one, subscribe_to: [Producer])
   end
 
+  @spec start_worker({action(), Pin.t()}) :: GenServer.on_start()
   def start_worker({action, pin}) do
     Task.start_link(fn ->
       Registry.register(Pins.registry(), pin.cid, :no_value)
@@ -27,6 +28,7 @@ defmodule Expin.Pins.WorkerSupervisor do
     end)
   end
 
+  @spec stop_worker(Pin.cid()) :: :ok
   def stop_worker(cid) do
     Registry.dispatch(Pins.registry(), cid, fn [{pid, _}] ->
       ConsumerSupervisor.terminate_child(WorkerSupervisor, pid)

@@ -7,6 +7,7 @@ defmodule Expin.Pins do
 
   alias Expin.Pins.{Pin, Producer, WorkerSupervisor}
 
+  @spec registry() :: GenServer.name()
   def registry(), do: __MODULE__.Registry
 
   def start_link([]) do
