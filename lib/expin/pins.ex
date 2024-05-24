@@ -5,7 +5,7 @@ defmodule Expin.Pins do
   alias Plug.Exception
   alias Expin.Repo
 
-  alias Expin.Pins.{Pin, Producer, WorkerSupervisor}
+  alias Expin.Pins.{Pin, Producer, Consumer}
 
   @spec registry() :: GenServer.name()
   def registry(), do: __MODULE__.Registry
@@ -19,7 +19,7 @@ defmodule Expin.Pins do
     children = [
       {Registry, keys: :unique, name: registry()},
       Producer,
-      WorkerSupervisor
+      Consumer
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

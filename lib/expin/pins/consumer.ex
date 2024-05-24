@@ -1,4 +1,4 @@
-defmodule Expin.Pins.WorkerSupervisor do
+defmodule Expin.Pins.Consumer do
   use ConsumerSupervisor
 
   alias Expin.IPFS
@@ -31,7 +31,7 @@ defmodule Expin.Pins.WorkerSupervisor do
   @spec stop_worker(Pin.cid()) :: :ok
   def stop_worker(cid) do
     Registry.dispatch(Pins.registry(), cid, fn [{pid, _}] ->
-      ConsumerSupervisor.terminate_child(WorkerSupervisor, pid)
+      ConsumerSupervisor.terminate_child(__MODULE__, pid)
     end)
   end
 

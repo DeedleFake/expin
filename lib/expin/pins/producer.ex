@@ -1,9 +1,9 @@
 defmodule Expin.Pins.Producer do
   use GenStage
 
-  alias Expin.Pins.{Pin, WorkerSupervisor}
+  alias Expin.Pins.{Pin, Consumer}
 
-  @spec run(WorkerSupervisor.action(), Pin.t()) :: :ok
+  @spec run(Consumer.action(), Pin.t()) :: :ok
   def run(action, pin) do
     GenStage.cast(__MODULE__, {:run, action, pin})
   end
@@ -19,7 +19,7 @@ defmodule Expin.Pins.Producer do
 
   @impl true
   def handle_cast({:run, action, pin}, state) do
-    WorkerSupervisor.stop_worker(pin.cid)
+    Consumer.stop_worker(pin.cid)
     {:noreply, [{action, pin}], state}
   end
 
