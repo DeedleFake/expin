@@ -257,6 +257,7 @@ defmodule ExpinWeb.CoreComponents do
   """
   attr :type, :string, default: nil
   attr :class, :string, default: nil
+  attr :usage, :atom, default: nil, values: [nil, :primary, :secondary]
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
@@ -266,8 +267,13 @@ defmodule ExpinWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+        "phx-submit-loading:opacity-75 rounded-lg py-2 px-3",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
+        case @usage do
+          nil -> "bg-zinc-900 hover:bg-zinc-700"
+          :primary -> "bg-blue-600 hover:bg-blue-500"
+          :secondary -> "bg-red-600 hover:bg-red-500"
+        end,
         @class
       ]}
       {@rest}
