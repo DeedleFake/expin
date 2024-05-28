@@ -13,6 +13,22 @@ defmodule ExpinWeb.AdminSettingsLive do
   @base_title " · Settings"
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <.tabs active={@active_tab}>
+      <:tab :for={tab <- tabs()} id={tab.id} title={tab.title}>
+        <.live_component
+          :if={tab[:module]}
+          module={tab.module}
+          id={tab.id}
+          {tab_extra(assigns, tab[:extra])}
+        />
+      </:tab>
+    </.tabs>
+    """
+  end
+
+  @impl true
   def mount(params, _session, socket) do
     socket =
       socket
@@ -65,6 +81,6 @@ defmodule ExpinWeb.AdminSettingsLive do
     tabs() |> Enum.find(fn %{id: tab} -> id == tab end)
   end
 
-  defp tab_extra(assigns, nil), do: []
+  defp tab_extra(_assigns, nil), do: []
   defp tab_extra(assigns, extra), do: assigns |> Enum.filter(fn {key, _} -> key in extra end)
 end

@@ -1,5 +1,0 @@
-<.tabs active={@active_tab}>
-  <:tab :for={tab <- tabs()} id={tab.id} title={tab.title}>
-    <.live_component :if={tab[:module]} module={tab.module} {tab_extra(assigns, tab[:extra])} />
-  </:tab>
-</.tabs>
