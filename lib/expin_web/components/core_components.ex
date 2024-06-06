@@ -285,7 +285,7 @@ defmodule ExpinWeb.CoreComponents do
 
   attr :class, :string, default: nil
   attr :icon, :string, required: true
-  attr :rest, :global, include: ~w(disabled form name value)
+  attr :rest, :global, include: ~w(disabled form name value usage)
 
   def icon_button(assigns) do
     ~H"""
